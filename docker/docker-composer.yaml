@@ -19,8 +19,8 @@ services:
   php-fpm:
     container_name: php-fpm
     build:
-      context: ./etc/php
-      dockerfile: Dockerfile
+      context: ../etc/php
+      dockerfile: docker/etc/php/Dockerfile
     restart: always
     volumes:
       - "./etc/php/php.ini:/usr/local/etc/php/conf.d/php.ini"
