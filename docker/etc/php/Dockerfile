@@ -1,4 +1,5 @@
-FROM php:8.5-fpm-bookworm
+FROM php:8.2-fpm-bookworm 
+# Nota: Alterado para 8.2 pois a 8.5 ainda não é estável/oficial para produção MapOS
 
 # PHP extensions installer
 COPY --from=ghcr.io/mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/local/bin/
@@ -45,7 +46,6 @@ RUN apt update && apt upgrade -y \
     intl \
     zip \
     sockets \
-    xmlrpc \
     memcached \
     redis \
     imagick \
@@ -63,7 +63,8 @@ RUN apt update && apt install supervisor cron -y
 
 # Setup cron jobs
 RUN touch /var/log/cron.log
-COPY cron-jobs /etc/cron.d/cron-jobs
+# CORREÇÃO: Caminho relativo à raiz do projeto
+COPY ./docker/etc/php/cron-jobs /etc/cron.d/cron-jobs
 
 # Give execution rights on the cron job
 RUN chmod 0644 /etc/cron.d/cron-jobs
@@ -75,6 +76,7 @@ RUN crontab /etc/cron.d/cron-jobs
 RUN mkdir -p /var/log/supervisor
 
 # Supervisor config file
-COPY ./supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+# CORREÇÃO: Caminho relativo à raiz do projeto
+COPY ./docker/etc/php/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 CMD ["/usr/bin/supervisord"]
